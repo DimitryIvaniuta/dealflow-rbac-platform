@@ -1,0 +1,37 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: dealflow-rbac-platform
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/dealflow
+    username: dealflow
+    password: dealflow
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # Replace with your real Issuer / JWK URL (Keycloak, Auth0, Azure AD, etc.)
+          issuer-uri: http://localhost:8081/realms/dealflow
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
