@@ -1,0 +1,67 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.9'
+}
+
+group = 'com.github.dimitryivaniuta'
+version = '0.1.0-SNAPSHOT'
+
+java {
+    toolchain { languageVersion = JavaLanguageVersion.of(21) }
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    springBootBom = "3.5.9"
+    lombokVersion = "1.18.36"
+    spqrStarterVersion = "1.0.1"
+    testcontainersBom = "2.0.3"
+}
+
+dependencies {
+    // Apply Spring Boot BOM using Gradle platform (no extra plugins)
+    implementation(enforcedPlatform("org.springframework.boot:spring-boot-dependencies:${springBootBom}"))
+    testImplementation(enforcedPlatform("org.springframework.boot:spring-boot-dependencies:${springBootBom}"))
+    annotationProcessor(enforcedPlatform("org.springframework.boot:spring-boot-dependencies:${springBootBom}"))
+
+    // Web + Security + OAuth2 Resource Server (JWT)
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-security"
+    implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
+
+    // JPA + DB
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    runtimeOnly "org.postgresql:postgresql"
+
+    // Flyway
+    implementation "org.flywaydb:flyway-core"
+    implementation "org.flywaydb:flyway-database-postgresql"
+
+    // GraphQL SPQR (code-first schema generation)
+    implementation "io.leangen.graphql:graphql-spqr-spring-boot-starter:${spqrStarterVersion}"
+
+    // Observability
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+
+    // Lombok (pin explicitly)
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    // Tests
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "org.springframework.security:spring-security-test"
+
+    // Testcontainers BOM (keep as platform)
+    testImplementation platform("org.testcontainers:testcontainers-bom:${testcontainersBom}")
+    testImplementation "org.testcontainers:junit-jupiter"
+    testImplementation "org.testcontainers:postgresql"
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
